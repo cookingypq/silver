@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  silver-app:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=sqlite:///./silver.db
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    volumes:
+      - ./repo_cache:/app/repo_cache
+    restart: unless-stopped
+
+  # 开发环境服务
+  silver-dev:
+    build: .
+    ports:
+      - "8001:8000"
+    environment:
+      - DATABASE_URL=sqlite:///./silver_dev.db
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    volumes:
+      - ./silver:/app
+      - ./repo_cache:/app/repo_cache
+    command: ["uvicorn", "main:app", "--reload", "--host", "0.0.0.0", "--port", "8000"]
+    profiles:
+      - dev 

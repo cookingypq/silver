@@ -1,0 +1,31 @@
+@import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap");
+
+.retro {
+  font-family:
+    "Press Start 2P",
+    system-ui,
+    -apple-system,
+    sans-serif;
+  line-height: 1.5;
+  letter-spacing: 0.5px;
+}
+
+.bit-btn {
+  font-size: 1rem;
+  padding: 0.75em 2em;
+  background: #ffe066;
+  color: #222;
+  border: none;
+  box-shadow: 0 4px #bfa900;
+  cursor: pointer;
+  position: relative;
+  font-weight: bold;
+  text-transform: uppercase;
+  outline: none;
+  transition: background 0.2s, box-shadow 0.2s, transform 0.1s;
+}
+
+.bit-btn:active {
+  box-shadow: 0 2px #bfa900;
+  transform: translateY(2px);
+} 
