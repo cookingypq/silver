@@ -1,5 +1,5 @@
 use walkdir::WalkDir;
-use syn::{visit::Visit, File, ItemFn, ExprCall, spanned::Spanned};
+use syn::{visit::Visit, ItemFn, ExprCall, spanned::Spanned};
 use std::fs;
 use std::collections::{HashSet, HashMap};
 
@@ -119,4 +119,10 @@ fn build_mermaid_chain(
             build_mermaid_chain(callee, fn_map, visited, lines);
         }
     }
+}
+
+/// 分析项目并返回调用链
+pub fn analyze_project(project_path: &str, test_hash: Option<&str>) -> String {
+    let entry_fn = test_hash.unwrap_or("main");
+    extract_call_chain_real(project_path, entry_fn)
 } 
