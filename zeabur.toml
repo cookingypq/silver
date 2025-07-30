@@ -1,0 +1,12 @@
+[build]
+builder = "nixpacks"
+
+[deploy]
+startCommand = "python -m uvicorn main:app --host 0.0.0.0 --port $PORT --workers 1"
+
+[env]
+OPENAI_API_KEY = ""
+DATABASE_URL = "sqlite:///./silver.db"
+PYTHON_VERSION = "3.11"
+NODE_VERSION = "20"
+RUST_VERSION = "1.75" 
