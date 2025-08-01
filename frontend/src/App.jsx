@@ -5,6 +5,7 @@ import BitButton from "./components/ui/8bit/button";
 import BitCard from "./components/ui/8bit/card";
 import BitLabel from "./components/ui/8bit/label";
 import BitInput from "./components/ui/8bit/input";
+import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "./components/ui/8bit/accordion"; // Import Accordion component
 import "./App.css";
 
 const STATUS_ICON = {
@@ -14,7 +15,7 @@ const STATUS_ICON = {
 };
 
 function randomConfidence() {
-  // 80~99 高，60~79 中，40~59 低
+  // 80~99 high, 60~79 medium, 40~59 low
   const r = Math.random();
   if (r > 0.7) return Math.floor(80 + Math.random() * 20);
   if (r > 0.3) return Math.floor(60 + Math.random() * 20);
@@ -154,17 +155,22 @@ export default function App() {
       <div className="header-section">
         <CircularText text="SILVER - RustSec Analyzer" spinDuration={18} onHover="speedUp" />
         <CurvedLoop marqueeText="Automated Call Chain Visualization • LLM + Static Analysis • High Confidence • 8bit UI" speed={1.5} />
+        <p className="description-text">
+          Silver is an automated security analysis tool for RustSec IDs.
+          It combines large language models (LLM) and static analysis to provide high-confidence call chain visualization.
+          Simply input RustSec IDs to quickly understand their potential impact and call paths.
+        </p>
       </div>
       
       <BitCard className="input-section">
         <BitLabel className="input-label">
-          Enter RustSec IDs (comma, space or newline separated):
+          Input RustSec IDs (separated by commas, spaces, or line breaks):
         </BitLabel>
         <textarea
           id="rustsec-input"
           className="rustsec-input"
           rows={3}
-          placeholder="e.g. RUSTSEC-2022-0001, RUSTSEC-2023-0010"
+          placeholder="Example: RUSTSEC-2022-0001, RUSTSEC-2023-0010"
           value={input}
           onChange={e => setInput(e.target.value)}
         />
@@ -186,6 +192,25 @@ export default function App() {
           </BitButton>
         </div>
       </BitCard>
+
+      <Accordion type="single" collapsible className="info-accordion">
+        <AccordionItem value="item-1">
+          <AccordionTrigger>What is Silver?</AccordionTrigger>
+          <AccordionContent>
+            Silver is a powerful security analysis tool specifically designed for automated analysis of RustSec IDs.
+            It leverages advanced LLM and static analysis technologies to provide developers with clear, accurate call chain visualization,
+            helping you quickly identify and understand potential security vulnerabilities.
+          </AccordionContent>
+        </AccordionItem>
+        <AccordionItem value="item-2">
+          <AccordionTrigger>How to use?</AccordionTrigger>
+          <AccordionContent>
+            Paste one or more RustSec IDs in the input box above (supports comma, space, or line break separation),
+            then click the "Analyze" button. The system will automatically analyze and display results, including confidence levels and call chain details.
+            You can also filter and export the results.
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
       
       <BitCard className="results-section">
         <div className="results-toolbar">
@@ -210,8 +235,8 @@ export default function App() {
           </div>
         </div>
         
-        <h2>Results ({filteredResults.length})</h2>
-        {filteredResults.length === 0 && <div className="empty-tip">No results yet. Please input RustSec IDs and click Analyze.</div>}
+        <h2>Analysis Results ({filteredResults.length})</h2>
+        {filteredResults.length === 0 && <div className="empty-tip">No results yet. Please input RustSec IDs and click analyze.</div>}
         
         <div className="results-grid">
           {filteredResults.map(r => (
@@ -225,7 +250,7 @@ export default function App() {
               </div>
               <div className="call-chain">{r.chain}</div>
               {r.confidence !== null && r.confidence < 60 && r.status !== "Failed" && (
-                <div className="confidence-warning">Low confidence, needs manual review.</div>
+                <div className="confidence-warning">Low confidence, manual review required.</div>
               )}
               <div className="result-actions">
                 {r.status === "Failed" && (
