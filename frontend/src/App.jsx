@@ -2,6 +2,9 @@ import { useState } from "react";
 import CircularText from "./components/CircularText";
 import CurvedLoop from "./components/CurvedLoop";
 import BitButton from "./components/ui/8bit/button";
+import BitCard from "./components/ui/8bit/card";
+import BitLabel from "./components/ui/8bit/label";
+import BitInput from "./components/ui/8bit/input";
 import "./App.css";
 
 const STATUS_ICON = {
@@ -23,6 +26,7 @@ export default function App() {
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const [filter, setFilter] = useState("all");
+  const [searchTerm, setSearchTerm] = useState("");
 
   // Simulate analysis
   const handleAnalyze = () => {
@@ -139,6 +143,10 @@ export default function App() {
     if (filter === "low") return r.confidence !== null && r.confidence < 60;
     if (filter === "spot") return r.spotCheck;
     return true;
+  }).filter((r) => {
+    if (!searchTerm) return true;
+    return r.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+           r.chain.toLowerCase().includes(searchTerm.toLowerCase());
   });
 
   return (
@@ -147,10 +155,11 @@ export default function App() {
         <CircularText text="SILVER - RustSec Analyzer" spinDuration={18} onHover="speedUp" />
         <CurvedLoop marqueeText="Automated Call Chain Visualization • LLM + Static Analysis • High Confidence • 8bit UI" speed={1.5} />
       </div>
-      <div className="input-section">
-        <label htmlFor="rustsec-input" className="input-label">
+      
+      <BitCard className="input-section">
+        <BitLabel className="input-label">
           Enter RustSec IDs (comma, space or newline separated):
-        </label>
+        </BitLabel>
         <textarea
           id="rustsec-input"
           className="rustsec-input"
@@ -159,57 +168,82 @@ export default function App() {
           value={input}
           onChange={e => setInput(e.target.value)}
         />
-        <BitButton
-          onClick={handleAnalyze}
-          disabled={loading || !input.trim()}
-          style={{ marginTop: 16 }}
-        >
-          {loading ? "Analyzing..." : "Analyze"}
-        </BitButton>
-      </div>
-      <div className="results-section">
-        <div className="results-toolbar">
-          <span>Filter:</span>
-          <select value={filter} onChange={e => setFilter(e.target.value)} className="results-filter">
-            <option value="all">All</option>
-            <option value="failed">Failed</option>
-            <option value="low">Low Confidence</option>
-            <option value="spot">Spot Check</option>
-          </select>
-          <BitButton onClick={() => handleExport("json")} style={{ marginLeft: 12, fontSize: 12, padding: "0.3em 1em" }}>Export JSON</BitButton>
-          <BitButton onClick={() => handleExport("txt")} style={{ marginLeft: 8, fontSize: 12, padding: "0.3em 1em" }}>Export TXT</BitButton>
+        <div className="button-group">
+          <BitButton
+            onClick={handleAnalyze}
+            disabled={loading || !input.trim()}
+            style={{ marginTop: 16 }}
+          >
+            {loading ? "Analyzing..." : "Analyze"}
+          </BitButton>
+          <BitButton
+            onClick={() => setInput("")}
+            disabled={!input.trim()}
+            style={{ marginTop: 16, marginLeft: 8 }}
+            variant="secondary"
+          >
+            Clear
+          </BitButton>
         </div>
-        <h2>Results</h2>
+      </BitCard>
+      
+      <BitCard className="results-section">
+        <div className="results-toolbar">
+          <div className="toolbar-left">
+            <BitLabel>Filter:</BitLabel>
+            <select value={filter} onChange={e => setFilter(e.target.value)} className="results-filter">
+              <option value="all">All</option>
+              <option value="failed">Failed</option>
+              <option value="low">Low Confidence</option>
+              <option value="spot">Spot Check</option>
+            </select>
+          </div>
+          <div className="toolbar-right">
+            <BitInput
+              placeholder="Search results..."
+              value={searchTerm}
+              onChange={e => setSearchTerm(e.target.value)}
+              style={{ width: "200px", marginRight: 8 }}
+            />
+            <BitButton onClick={() => handleExport("json")} size="sm">Export JSON</BitButton>
+            <BitButton onClick={() => handleExport("txt")} size="sm" style={{ marginLeft: 8 }}>Export TXT</BitButton>
+          </div>
+        </div>
+        
+        <h2>Results ({filteredResults.length})</h2>
         {filteredResults.length === 0 && <div className="empty-tip">No results yet. Please input RustSec IDs and click Analyze.</div>}
-        <ul className="results-list">
+        
+        <div className="results-grid">
           {filteredResults.map(r => (
-            <li key={r.id} className={`result-item ${r.status === "Failed" ? "failed" : r.confidence !== null && r.confidence < 60 ? "low-confidence" : ""}`}>
+            <BitCard key={r.id} className={`result-item ${r.status === "Failed" ? "failed" : r.confidence !== null && r.confidence < 60 ? "low-confidence" : ""}`}>
               <div className="result-row">
                 <span className="status-icon">{STATUS_ICON[r.status] || ""}</span>
                 <strong>{r.id}</strong>
                 <span className="confidence-score">
                   {r.confidence !== null && r.status !== "Failed" ? `Confidence: ${r.confidence}` : null}
                 </span>
-                {r.status === "Failed" && (
-                  <BitButton onClick={() => handleRetry(r.id)} font="retro" size="sm" style={{ marginLeft: 8, fontSize: 12, padding: "0.2em 0.8em" }}>Retry</BitButton>
-                )}
-                <BitButton
-                  onClick={() => handleSpotCheck(r.id)}
-                  font="retro"
-                  size="sm"
-                  style={{ marginLeft: 8, fontSize: 12, padding: "0.2em 0.8em", background: r.spotCheck ? "#ffe066" : undefined }}
-                >
-                  {r.spotCheck ? "Spot Checked" : "Spot Check"}
-                </BitButton>
               </div>
               <div className="call-chain">{r.chain}</div>
               {r.confidence !== null && r.confidence < 60 && r.status !== "Failed" && (
                 <div className="confidence-warning">Low confidence, needs manual review.</div>
               )}
-            </li>
+              <div className="result-actions">
+                {r.status === "Failed" && (
+                  <BitButton onClick={() => handleRetry(r.id)} font="retro" size="sm">Retry</BitButton>
+                )}
+                <BitButton
+                  onClick={() => handleSpotCheck(r.id)}
+                  font="retro"
+                  size="sm"
+                  style={{ marginLeft: 8, background: r.spotCheck ? "#ffe066" : undefined }}
+                >
+                  {r.spotCheck ? "Spot Checked" : "Spot Check"}
+                </BitButton>
+              </div>
+            </BitCard>
           ))}
-        </ul>
-      </div>
+        </div>
+      </BitCard>
     </div>
   );
 }

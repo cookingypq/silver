@@ -28,4 +28,120 @@
 .bit-btn:active {
   box-shadow: 0 2px #bfa900;
   transform: translateY(2px);
+}
+
+.bit-input-container {
+  position: relative;
+  display: inline-block;
+}
+
+.bit-input {
+  font-size: 1rem;
+  padding: 0.75em 1em;
+  background: #232946;
+  color: #fff;
+  border: none;
+  box-shadow: 0 4px #bfa900;
+  position: relative;
+  font-weight: bold;
+  outline: none;
+  transition: background 0.2s, box-shadow 0.2s, transform 0.1s;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.bit-input:focus {
+  box-shadow: 0 2px #bfa900;
+  transform: translateY(2px);
+}
+
+.bit-card {
+  font-size: 1rem;
+  padding: 1.5em;
+  background: #393e6e;
+  color: #fff;
+  border: none;
+  box-shadow: 0 4px #bfa900;
+  position: relative;
+  font-weight: bold;
+  outline: none;
+  transition: background 0.2s, box-shadow 0.2s, transform 0.1s;
+  margin: 0.5em;
+}
+
+.bit-card:hover {
+  box-shadow: 0 2px #bfa900;
+  transform: translateY(2px);
+}
+
+.bit-label {
+  font-size: 1rem;
+  padding: 0.5em 1em;
+  background: #ffe066;
+  color: #222;
+  border: none;
+  box-shadow: 0 4px #bfa900;
+  position: relative;
+  font-weight: bold;
+  text-transform: uppercase;
+  outline: none;
+  transition: background 0.2s, box-shadow 0.2s, transform 0.1s;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.bit-label:hover {
+  box-shadow: 0 2px #bfa900;
+  transform: translateY(2px);
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .bit-btn,
+  .bit-input,
+  .bit-card,
+  .bit-label {
+    font-size: 0.9rem;
+  }
+  
+  .bit-btn {
+    padding: 0.6em 1.5em;
+  }
+  
+  .bit-input {
+    padding: 0.6em 0.8em;
+  }
+  
+  .bit-card {
+    padding: 1.2em;
+  }
+  
+  .bit-label {
+    padding: 0.4em 0.8em;
+  }
+}
+
+@media (max-width: 480px) {
+  .bit-btn,
+  .bit-input,
+  .bit-card,
+  .bit-label {
+    font-size: 0.8rem;
+  }
+  
+  .bit-btn {
+    padding: 0.5em 1.2em;
+  }
+  
+  .bit-input {
+    padding: 0.5em 0.6em;
+  }
+  
+  .bit-card {
+    padding: 1em;
+  }
+  
+  .bit-label {
+    padding: 0.3em 0.6em;
+  }
 } 
